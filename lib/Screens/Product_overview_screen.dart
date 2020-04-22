@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/Models/Providers/Products_provider.dart';
+import 'package:shop/Models/Providers/cart.dart';
+import 'package:shop/Widgets/badge.dart';
 import 'package:shop/Widgets/product_item.dart';
 
 class ProductOverviewScreen extends StatefulWidget {
@@ -9,27 +11,26 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
-  bool _showFav=false;
+  bool _showFav = false;
 
   @override
   Widget build(BuildContext context) {
-    final productData = Provider.of<Products>(context,listen: false);
-    final loadedProducts = _showFav?productData.favItems: productData.item;
+    final productData = Provider.of<Products>(context, listen: false);
+    final loadedProducts = _showFav ? productData.favItems : productData.item;
     return Scaffold(
       appBar: AppBar(
         title: Text("MY SHOP"),
         actions: <Widget>[
           PopupMenuButton(
-            onSelected: (int selectedValue){
-              setState(() {
-                if(selectedValue==0){
-                _showFav=true;
-                }
-                else{
-                _showFav=false;
-                }
-              }); 
-            },
+              onSelected: (int selectedValue) {
+                setState(() {
+                  if (selectedValue == 0) {
+                    _showFav = true;
+                  } else {
+                    _showFav = false;
+                  }
+                });
+              },
               icon: Icon(
                 Icons.more_vert,
               ),
@@ -42,7 +43,17 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                       child: Text("Show All"),
                       value: 1,
                     )
-                  ])
+                  ]),
+          Consumer<Cart>(
+                      builder:(_,cartData,ch)=> Badge(
+              child:ch,
+              value: cartData.count.toString(),
+            ),
+            child:  IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: (){},
+              ),
+          )
         ],
       ),
       body: GridView.builder(
