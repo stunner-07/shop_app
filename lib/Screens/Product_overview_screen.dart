@@ -5,6 +5,8 @@ import 'package:shop/Models/Providers/cart.dart';
 import 'package:shop/Widgets/badge.dart';
 import 'package:shop/Widgets/product_item.dart';
 
+import 'Cart_screen.dart';
+
 class ProductOverviewScreen extends StatefulWidget {
   @override
   _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
@@ -45,14 +47,16 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                     )
                   ]),
           Consumer<Cart>(
-                      builder:(_,cartData,ch)=> Badge(
-              child:ch,
+            builder: (_, cartData, ch) => Badge(
+              child: ch,
               value: cartData.count.toString(),
             ),
-            child:  IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: (){},
-              ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
           )
         ],
       ),
