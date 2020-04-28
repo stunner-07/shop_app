@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/Models/Providers/Products_provider.dart';
 import 'package:shop/Models/Providers/cart.dart';
+import 'package:shop/Widgets/app_drawer.dart';
 import 'package:shop/Widgets/badge.dart';
 import 'package:shop/Widgets/product_item.dart';
 
@@ -60,6 +61,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           )
         ],
       ),
+      drawer: AppDrawer(),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
