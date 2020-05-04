@@ -6,10 +6,13 @@ import 'package:shop/Widgets/app_drawer.dart';
 import 'package:shop/Widgets/user_product_item.dart';
 
 class UserProductScreen extends StatelessWidget {
-  static const routeName='/userProduct';
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
+  static const routeName = '/userProduct';
   @override
   Widget build(BuildContext context) {
-    final productData=Provider.of<Products>(context);
+    final productData = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Products"),
@@ -23,16 +26,26 @@ class UserProductScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(itemBuilder:(_,i){
-          return Column(
-            children: <Widget>[
-              UserProductItem(productData.item[i].id, productData.item[i].title, productData.item[i].imageUrl),
-              Divider(),
-            ],
-          );
-        } ,itemCount:productData.item.length ,),
+      body: new RefreshIndicator(
+        key: _refreshIndicatorKey,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemBuilder: (_, i) {
+              return Column(
+                children: <Widget>[
+                  UserProductItem(productData.item[i].id,
+                      productData.item[i].title, productData.item[i].imageUrl),
+                  Divider(),
+                ],
+              );
+            },
+            itemCount: productData.item.length,
+          ),
+        ),
+        onRefresh: () async {
+          await productData.fetchAndGetProducts();
+        },
       ),
     );
   }

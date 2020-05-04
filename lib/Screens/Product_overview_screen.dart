@@ -14,8 +14,29 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
-  bool _showFav = false;
+  var init = true;
+  bool _isLoading = false;
+  @override
+  void initState() {
+    //Provider.of<Products>(context).fetchAndGetProducts();
+    super.initState();
+  }
 
+  @override
+  void didChangeDependencies() {
+    if (init) {
+      _isLoading = true;
+      Provider.of<Products>(context).fetchAndGetProducts().then((onValue) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    init = false;
+    super.didChangeDependencies();
+  }
+
+  bool _showFav = false;
   @override
   Widget build(BuildContext context) {
     final productData = Provider.of<Products>(context, listen: false);
@@ -62,24 +83,28 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-          value: loadedProducts[i],
-          child: ProductItem(
-              // loadedProducts[i].id, loadedProducts[i].title,
-              //   loadedProducts[i].imageUrl
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 3 / 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-          //create: (BuildContext context) => loadedProducts[i],
-        ),
-        itemCount: loadedProducts.length,
-        padding: const EdgeInsets.all(10),
-      ),
+              itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+                value: loadedProducts[i],
+                child: ProductItem(
+                    // loadedProducts[i].id, loadedProducts[i].title,
+                    //   loadedProducts[i].imageUrl
+                    ),
+                //create: (BuildContext context) => loadedProducts[i],
+              ),
+              itemCount: loadedProducts.length,
+              padding: const EdgeInsets.all(10),
+            ),
     );
   }
 }
