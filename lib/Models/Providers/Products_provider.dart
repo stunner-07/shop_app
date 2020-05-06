@@ -40,6 +40,11 @@ class Products with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
+  String authToken;
+  //Products(this.authToken,this._item);
+  void update(String auth){
+    authToken=auth;
+  }
   List<Product> get item {
     return [..._item];
   }
@@ -54,7 +59,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndGetProducts() async {
     try {
-      const url = 'https://shop-app-e2be0.firebaseio.com/products.json';
+      final  url = 'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if(extractedData==null){
@@ -79,7 +84,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://shop-app-e2be0.firebaseio.com/products.json';
+    final url = 'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.post(
         url,
@@ -106,7 +111,7 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final index = _item.indexWhere((prod) => prod.id == id);
-    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json';
+    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
     http.patch(url,
         body: json.encode({
           'title': newProduct.title,
@@ -119,7 +124,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteproduct(String id) async{
-    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json';
+    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex = _item.indexWhere((prod) => prod.id == id);
     var _existingProduct = _item[existingProductIndex];
     _item.removeWhere((prod) => prod.id == id);

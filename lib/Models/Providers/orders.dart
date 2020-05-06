@@ -17,37 +17,52 @@ class Order with ChangeNotifier {
     return [..._orders];
   }
 
+  String authToken;
+  void update(String auth) {
+    authToken = auth;
+  }
+
   Future<void> fetchAndGetOrders() async {
-    const url = 'https://shop-app-e2be0.firebaseio.com/orders.json';
+    final url =
+        'https://shop-app-e2be0.firebaseio.com/orders.json?auth=$authToken';
     final reponse = await http.get(url);
+    //print(reponse.body);
     List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(reponse.body) as Map<String, dynamic>;
-    if(extractedData==null){
+    if (extractedData == null) {
       return;
     }
+    //print(extractedData);
     extractedData.forEach((orderId, orderData) {
-      loadedOrders.add(OrderItem(
-        id: orderId,
-        amount: orderData['amount'],
-        dateTime: DateTime.parse(
-          orderData['dateTime'],
+      //print(orderData);
+      _orders.insert(0,
+        OrderItem(
+          id: orderId,
+          products: (orderData['products'] as List<dynamic>).map((items) {
+            //print(items['title']);
+            return CartItem(
+              id: items['id'],
+              price: items['price'],
+              title: items['title'],
+              quantity: items['quantity'],
+            );
+            //print(items['id']);
+          }).toList(),
+          dateTime: DateTime.parse(
+            orderData['dateTime'],
+          ),
+          amount: double.parse(orderData['amount'].toString()),
         ),
-        products: (orderData['products'] as List<dynamic>).map((items) {
-          CartItem(
-            id: items['id'],
-            price: items['price'],
-            title: items['title'],
-            quantity: items['quantity'],
-          );
-        }).toList(),
-      ));
+      );
     });
-    _orders=loadedOrders.reversed.toList();
+    //_orders = loadedOrders;
+    //print(_orders[0].products[0]);
     notifyListeners();
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    const url = 'https://shop-app-e2be0.firebaseio.com/orders.json';
+    final url =
+        'https://shop-app-e2be0.firebaseio.com/orders.json?auth=$authToken';
     final timeStamp = DateTime.now();
     final response = await http.post(url,
         body: json.encode({
@@ -70,6 +85,7 @@ class Order with ChangeNotifier {
           dateTime: timeStamp,
           products: cartProducts,
         ));
+        //print(_orders.length);
     notifyListeners();
   }
 }

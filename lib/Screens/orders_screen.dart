@@ -40,7 +40,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
               child: CircularProgressIndicator(),
             )
           : ListView.builder(
-              itemBuilder: (ctx, i) => or.OrderItem(order.orders[i]),
+              itemBuilder: (ctx, i) {
+                //print(order.orders[i].products);
+                return or.OrderItem(order.orders[i]);
+              },
               itemCount: order.orders.length,
             ),
     );
