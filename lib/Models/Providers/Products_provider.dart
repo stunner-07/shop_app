@@ -41,10 +41,13 @@ class Products with ChangeNotifier {
     // ),
   ];
   String authToken;
+  String userId;
   //Products(this.authToken,this._item);
-  void update(String auth){
-    authToken=auth;
+  void update(String auth, String id) {
+    authToken = auth;
+    userId = id;
   }
+
   List<Product> get item {
     return [..._item];
   }
@@ -59,12 +62,18 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndGetProducts() async {
     try {
-      final  url = 'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
+      var url =
+          'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      if(extractedData==null){
-      return;
-    }
+      if (extractedData == null) {
+        return;
+      }
+      url =
+          'https://shop-app-e2be0.firebaseio.com/userFav/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
+      //print(favoriteData);
       final List<Product> loadedProducts = [];
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -73,7 +82,8 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           imageUrl: prodData['imageUrl'],
-          isFavorite: prodData['isFavourite'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
         ));
         _item = loadedProducts;
         notifyListeners();
@@ -84,7 +94,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = 'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
+    final url =
+        'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.post(
         url,
@@ -93,7 +104,6 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavourite': product.isFavorite,
         }),
       );
       final newProduct = Product(
@@ -111,7 +121,8 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final index = _item.indexWhere((prod) => prod.id == id);
-    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
+    final url =
+        'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
     http.patch(url,
         body: json.encode({
           'title': newProduct.title,
@@ -123,19 +134,19 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteproduct(String id) async{
-    final url = 'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
+  Future<void> deleteproduct(String id) async {
+    final url =
+        'https://shop-app-e2be0.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex = _item.indexWhere((prod) => prod.id == id);
     var _existingProduct = _item[existingProductIndex];
     _item.removeWhere((prod) => prod.id == id);
     notifyListeners();
-    final response= await http.delete(url);
-      if(response.statusCode>=400){
-        _item.insert(existingProductIndex, _existingProduct);
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _item.insert(existingProductIndex, _existingProduct);
       notifyListeners();
-        throw HttpExecption("Could not delete");
-      }
-      _existingProduct = null;
-      
+      throw HttpExecption("Could not delete");
+    }
+    _existingProduct = null;
   }
 }
