@@ -39,13 +39,22 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemBuilder: (ctx, i) {
-                //print(order.orders[i].products);
-                return or.OrderItem(order.orders[i]);
-              },
-              itemCount: order.orders.length,
-            ),
+          : order.orders.length == 0
+              ? Center(
+                  child: Text('No orders yet',style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Lato',
+                    color: Colors.grey,
+                  ),),
+                )
+              : ListView.builder(
+                  itemBuilder: (ctx, i) {
+                    //print(order.orders[i].products);
+                    return or.OrderItem(order.orders[i]);
+                  },
+                  itemCount: order.orders.length,
+                ),
     );
   }
 }
