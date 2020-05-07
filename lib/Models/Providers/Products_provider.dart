@@ -60,10 +60,11 @@ class Products with ChangeNotifier {
     return item.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void> fetchAndGetProducts() async {
+  Future<void> fetchAndGetProducts([bool filterScreen=false]) async {
+    final filterString=filterScreen?'orderBy="createrId"&equalTo="$userId"':'';
     try {
       var url =
-          'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken';
+          'https://shop-app-e2be0.firebaseio.com/products.json?auth=$authToken&$filterString';
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
@@ -104,6 +105,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'createrId':userId,
         }),
       );
       final newProduct = Product(
