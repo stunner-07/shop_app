@@ -6,6 +6,7 @@ import 'package:shop/Screens/edit_Product_screen.dart';
 import 'package:shop/Screens/orders_screen.dart';
 import 'package:shop/Screens/splash_screen.dart';
 import 'package:shop/Screens/user_product_screen.dart';
+import 'package:shop/helpers/custom_route.dart';
 
 import 'Models/Providers/Products_provider.dart';
 import 'Models/Providers/auth.dart';
@@ -43,10 +44,15 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
-              primarySwatch: Colors.purple,
-              accentColor: Colors.deepOrange,
-              fontFamily: 'Lato',
-            ),
+                primarySwatch: Colors.purple,
+                accentColor: Colors.deepOrange,
+                fontFamily: 'Lato',
+                pageTransitionsTheme: PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android: CustomPageTransitionBuilder(),
+                    TargetPlatform.iOS: CustomPageTransitionBuilder(),
+                  },
+                )),
             home: auth.isAuth
                 ? ProductOverviewScreen()
                 : FutureBuilder(

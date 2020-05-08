@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/Models/Providers/auth.dart';
 import 'package:shop/Screens/orders_screen.dart';
 import 'package:shop/Screens/user_product_screen.dart';
+import 'package:shop/helpers/custom_route.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -20,7 +21,7 @@ class AppDrawer extends StatelessWidget {
               Icons.shop,
             ),
             title: Text('My Shop'),
-            onTap: (){
+            onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
             },
           ),
@@ -30,8 +31,11 @@ class AppDrawer extends StatelessWidget {
               Icons.payment,
             ),
             title: Text('My Orders'),
-            onTap: (){
-              Navigator.of(context).pushReplacementNamed(OrdersScreen.routename);
+            onTap: () {
+              //Navigator.of(context).pushReplacementNamed(OrdersScreen.routename);
+              Navigator.of(context).pushReplacement(
+                CustomPageRoute(builder: (ctx) => OrdersScreen()),
+              );
             },
           ),
           Divider(),
@@ -40,8 +44,9 @@ class AppDrawer extends StatelessWidget {
               Icons.edit,
             ),
             title: Text('Manage Product'),
-            onTap: (){
-              Navigator.of(context).pushReplacementNamed(UserProductScreen.routeName);
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(UserProductScreen.routeName);
             },
           ),
           Divider(),
@@ -50,11 +55,11 @@ class AppDrawer extends StatelessWidget {
               Icons.exit_to_app,
             ),
             title: Text('Logout'),
-            onTap: (){
+            onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
               //Navigator.of(context).pushReplacementNamed(UserProductScreen.routeName);
-              Provider.of<Auth>(context,listen: false).logout();
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
           Divider(),

@@ -15,31 +15,42 @@ class _OrderItemState extends State<OrderItem> {
   bool _isexpanded = false;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10),
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: Text(
-              'Rs ${widget.order.amount}',
+    return AnimatedContainer(
+      duration: Duration(
+        milliseconds: 300,
+      ),
+      height: _isexpanded
+          ? min(widget.order.products.length * 20.0 + 110, 200)
+          : 95,
+      child: Card(
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              title: Text(
+                'Rs ${widget.order.amount}',
+              ),
+              subtitle: Text(
+                DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime),
+              ),
+              trailing: IconButton(
+                icon: Icon(_isexpanded ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    _isexpanded = !_isexpanded;
+                  });
+                },
+              ),
             ),
-            subtitle: Text(
-              DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime),
-            ),
-            trailing: IconButton(
-              icon: Icon(_isexpanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _isexpanded = !_isexpanded;
-                });
-              },
-            ),
-          ),
-          if (_isexpanded)
-            Container(
-              height: min(widget.order.products.length * 20.0 + 10, 80),
+            AnimatedContainer(
+              duration: Duration(
+                milliseconds: 300,
+              ),
+              height: _isexpanded
+                  ? min(widget.order.products.length * 20.0 + 10, 100)
+                  : 0,
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
                 children: widget.order.products.map((prod) {
                   //print(widget.order.products.length);
                   return Row(
@@ -64,7 +75,8 @@ class _OrderItemState extends State<OrderItem> {
                 }).toList(),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
