@@ -84,7 +84,7 @@ class Auth with ChangeNotifier {
       return false;
     }
     _token=extracteduserData['token'];
-    _userId=extracteduserData['userid'];
+    _userId=extracteduserData['userId'];
     _expiryDate=expiryDate;
     notifyListeners();
     autoLogout();

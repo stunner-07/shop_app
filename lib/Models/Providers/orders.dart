@@ -23,8 +23,9 @@ class Order with ChangeNotifier {
     authToken = auth;
     userId=id;
   }
-
+  //Order(this.authToken,this.userId,this._orders);
   Future<void> fetchAndGetOrders() async {
+    //print(userId);
     final url =
         'https://shop-app-e2be0.firebaseio.com/orders/$userId.json?auth=$authToken';
     final reponse = await http.get(url);
@@ -32,6 +33,7 @@ class Order with ChangeNotifier {
     List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(reponse.body) as Map<String, dynamic>;
     if (extractedData == null) {
+      //_orders=[];
       return;
     }
     //print(extractedData);
@@ -58,7 +60,7 @@ class Order with ChangeNotifier {
       );
     });
     _orders = loadedOrders.reversed.toList();
-    //print(_orders[0].products[0]);
+    //print(_orders.length);
     notifyListeners();
   }
 
